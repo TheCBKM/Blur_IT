@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+div.gallery {
+  margin: 5px;
+  border: 1px solid #ccc;
+  float: left;
+  width: 180px;
+}
+
+div.gallery:hover {
+  border: 1px solid #777;
+}
+
+div.gallery img {
+  width: 100%;
+  height: auto;
+}
+
+div.desc {
+  padding: 15px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+{%for r in rec%}
+<div class="gallery">
+  <a target="_blank" href="/{{r.hash}}">
+    <img src="https://ipfs.io/ipfs/{{r.hash}}" alt="Cinque Terre" width="600" height="400">
+  </a>
+  <div class="desc">Number of faces  {{r.facesNum}}</div>
+</div>
+{%endfor%}
+
+</body>
+</html>
