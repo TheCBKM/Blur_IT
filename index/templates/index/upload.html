@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <title>Document</title>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <style>
+            body {
+                font-family: sans-serif;
+                background-color: #eeeeee;
+            }
+
+            .file-upload {
+                background-color: #ffffff;
+                width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+
+            .file-upload-btn {
+                width: 100%;
+                margin: 0;
+                color: #fff;
+                background: #1FB264;
+                border: none;
+                padding: 10px;
+                border-radius: 4px;
+                border-bottom: 4px solid #15824B;
+                div>7 </div transition: all .2s ease;
+                outline: none;
+                text-transform: uppercase;
+                font-weight: 700;
+            }
+
+            .file-upload-btn:hover {
+                background: #1AA059;
+                color: #ffffff;
+                transition: all .2s ease;
+                cursor: pointer;
+            }
+
+            .file-upload-btn:active {
+                border: 0;
+                transition: all .2s ease;
+            }
+
+            .file-upload-content {
+                display: none;
+                text-align: center;
+            }
+
+            .file-upload-input {
+                position: absolute;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+                outline: none;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            .image-upload-wrap {
+                margin-top: 20px;
+                border: 4px dashed #1FB264;
+                position: relative;
+            }
+
+            .image-uploaded-wrap {
+                margin-top: 20px;
+                border: 4px dashed #1FB264;
+                position: relative;
+            }
+
+            .image-dropping,
+            .image-upload-wrap:hover {
+                background-color: #1FB264;
+                border: 4px dashed #ffffff;
+            }
+
+            .image-title-wrap {
+                padding: 0 15px 15px 15px;
+                color: #222;
+            }
+
+            .drag-text {
+                text-align: center;
+            }
+
+            .drag-text h3 {
+                font-weight: 100;
+                text-transform: uppercase;
+                color: #15824B;
+                padding: 60px 0;
+            }
+
+            .file-upload-image {
+                max-height: 200px;
+                max-width: 200px;
+                margin: auto;
+                padding: 20px;
+            }
+
+            .remove-image {
+                width: 200px;
+                margin: 0;
+                color: #fff;
+                background: #cd4535;
+                border: none;
+                padding: 10px;
+                border-radius: 4px;
+                border-bottom: 4px solid #b02818;
+                transition: all .2s ease;
+                outline: none;
+                text-transform: uppercase;
+                font-weight: 700;
+            }
+
+            .remove-image:hover {
+                background: #c13b2a;
+                color: #ffffff;
+                transition: all .2s ease;
+                cursor: pointer;
+            }
+
+            .remove-image:active {
+                border: 0;
+                transition: all .2s ease;
+            }
+        </style>
+    </head>
+
+<body id="body">
+    <div id="display">
+        <div class="file-upload">
+            <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add
+                Image</button>
+
+            <div class="image-upload-wrap">
+                <input class="file-upload-input" accept="image/*" id="f" name="f" type='file' onchange="readURL(this);"
+                    accept="image/*" />
+                <div class="drag-text">
+                    <h3>Drag and drop a file or select add Image</h3>
+                </div>
+            </div>
+            <div class="file-upload-content">
+                <img class="file-upload-image" src="#" alt="your image" />
+                <div class="image-title-wrap">
+                    <button type="button" onclick="removeUpload()" class="remove-image">Remove <span
+                            class="image-title"></span>
+                    </button>
+
+                </div>
+                <button class="file-upload-btn" onclick="upload()">
+                    Uploaded Image</button>
+            </div>
+        </div>
+
+
+
+        <br>
+    </div>
+    <div id="result" class=" file-upload">
+        <div class="image-uploaded-wrap">
+            <center>
+                <div class="card" style="width: 18rem;">
+                    <div class="w3-light-grey">
+                        uploading:- <div class="w3-light-grey">
+                            <div id="upload" class="w3-green" style="height:24px;width:0"></div>
+                        </div>
+                        Compressing:- <div class="w3-light-grey">
+                            <div id="compress" class="w3-green" style="height:24px;width:0"></div>
+                        </div>
+                        Detecting Faces:- <div class="w3-light-grey">
+                            <div id="detection" class="w3-green" style="height:24px;width:0"></div>
+                        </div>
+                        Blurring Faces:- <div class="w3-light-grey">
+                            <div id="blur" class="w3-green" style="height:24px;width:0"></div>
+                        </div>
+                        Uploading to IPFS:- <div class="w3-light-grey">
+                            <div id="ipfs" class="w3-green" style="height:24px;width:0"></div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </center>
+        </div>
+    </div>
+    <br>
+
+
+
+</body>
+<script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script>
+    document.getElementById('result').style.display = 'none'
+
+    var hasArived = false
+    var go = false
+    u = document.getElementById('upload')
+    c = document.getElementById('compress')
+    d = document.getElementById('detection')
+    b = document.getElementById('blur')
+    ip = document.getElementById('ipfs')
+    var hash = ''
+    function move(ele, start, end, r) {
+        return new Promise((resolv, reject) => {
+
+            var elem = ele
+            var width = start;
+            var id = setInterval(frame, r);
+            function frame() {
+                if (width >= end) {
+                    clearInterval(id);
+                    resolv()
+                } else {
+                    width++;
+                    elem.style.width = width + '%';
+                }
+            }
+        })
+    }
+    async function start() {
+        document.getElementById('display').style.display = 'none';
+        document.getElementById('result').style.display = 'block'
+
+        arr = [u, c, d, b, ip]
+        var i = 0
+        for (; i < arr.length - 1; i++) {
+            if (i == 0)
+                await move(arr[i], 0, 100, 30)
+            if (i == 1)
+                await move(arr[i], 0, 100, 50)
+            if (i == 2)
+                await move(arr[i], 0, 100, 50)
+            if (i == 3)
+                await move(arr[i], 0, 100, 50)
+
+
+            if (hasArived) {
+                break
+            }
+        }
+
+
+        await move(arr[4], 0, 40, 300)
+        go = true
+
+    }
+
+    function upload() {
+        const photoFormData = new FormData();
+        photoFormData.append("f", document.getElementById('f').files[0]);
+        start()
+        axios({
+            method: "POST",
+            url: "/upload",
+            data: photoFormData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'multipart/form-data; boundary=${form._boundary}'
+            }
+        }).then(data => {
+            (async () => {
+                console.log(data)
+                hasArived = true
+                hash = data.data
+                for (i = 0; i < arr.length; i++) {
+                    await move(arr[i], 0, 100, 10)
+                }
+                window.location.href = `/${hash}`
+                if (go) {
+                    await move(arr[4], 40, 100, 10)
+                    window.location.href = `/${hash}`
+                }
+            })()
+        })
+    }
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('.image-upload-wrap').hide();
+
+                $('.file-upload-image').attr('src', e.target.result);
+                $('.file-upload-content').show();
+
+                $('.image-title').html(input.files[0].name);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+
+        } else {
+            removeUpload();
+        }
+    }
+
+    function removeUpload() {
+        $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+        $('.file-upload-content').hide();
+        $('.image-upload-wrap').show();
+    }
+    $('.image-upload-wrap').bind('dragover', function () {
+        $('.image-upload-wrap').addClass('image-dropping');
+    });
+    $('.image-upload-wrap').bind('dragleave', function () {
+        $('.image-upload-wrap').removeClass('image-dropping');
+    });
+
+
+</script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
+</html>

@@ -27,8 +27,12 @@ div.desc {
 <body>
 {%for r in rec%}
 <div class="gallery">
-  <a target="_blank" href="/{{r.hash}}">
-    <img src="https://ipfs.io/ipfs/{{r.hash}}" alt="Cinque Terre" width="600" height="400">
+  <a target="_blank" href="/{{r.afterhash}}">
+  Before
+    <img src="https://ipfs.io/ipfs/{{r.beforehash}}"  width="600" height="400">
+  After  
+    <img src="https://ipfs.io/ipfs/{{r.afterhash}}"  width="600" height="400">
+
   </a>
   <div class="desc">Number of faces  {{r.facesNum}}</div>
 </div>

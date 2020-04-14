@@ -11,9 +11,13 @@ from .models import Record
 
 # Create your views here.
 
-
 def hello(req):
     return render(req, 'index/index.html')
+
+def uploadImage(req):
+    return render(req, 'index/upload.html')
+
+
 
 
 def upload(request):
@@ -35,30 +39,32 @@ def upload(request):
     cp.saveCompressed(src)
     face_locations = fb.face_blur(src, dest)
     print(face_locations)
+
+    beforeHash = ipfs.uploadIpfs(src)[0]['Hash']
+    afterHash = ipfs.uploadIpfs(dest)[0]['Hash']
+    print(beforeHash,afterHash)
     os.remove(src)
-    res = ipfs.uploadIpfs(dest)
-    print(res)
-    hash_id = res[0]['Hash']
     os.remove(dest)
-    rec = Record.objects.filter(hash=hash_id)
+    rec = Record.objects.filter(afterhash=afterHash)
     if len(rec) == 0:
         print("unique")
-        r = Record(hash=hash_id, faces=str(face_locations))
+        r = Record(afterhash=afterHash,beforehash=beforeHash, faces=str(face_locations))
         r.save()
-        return HttpResponse(hash_id)
+        return HttpResponse(afterHash)
     else:
         print("same")
-        return HttpResponse(rec[0].hash)
+        return HttpResponse(afterHash)
 
 
 def viewimg(req, hash_id):
-    rec = Record.objects.filter(hash=hash_id)
+    rec = Record.objects.filter(afterhash=hash_id)
     faces = rec[0].faces.strip('[]').strip('()').split('), (')
     print(faces)
     context = {
         'faceNum':len(faces),
         'faces':faces,
-        'hash':rec[0].hash
+        'beforehash':rec[0].beforehash,
+        'afterhash':rec[0].afterhash
          }
     return render(req, 'index/viewimg.html',context)
 

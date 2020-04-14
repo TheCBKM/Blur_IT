@@ -29,14 +29,18 @@
     <center>
         Total Face found = {{faceNum}}<br>
         {% if faceNum > 0 %}
-    
+
         {% for face in faces %}
         Face {{forloop.counter}}:-
         {{face}}<br>
         {%endfor%}
         {% endif %}
-    <img width="30%" src="https://ipfs.io/ipfs/{{hash}}" />
-</center>
+
+        <img width="30%" src="https://ipfs.io/ipfs/{{beforehash}}" />
+
+        <img width="30%" src="https://ipfs.io/ipfs/{{afterhash}}" />
+
+    </center>
 
 
 
