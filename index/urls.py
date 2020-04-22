@@ -6,8 +6,8 @@ urlpatterns = [
     path('',views.hello),
     path('uploadImage',views.uploadImage),
     path('gallery',views.gallery),
-    path('upload',views.upload),
+    path('upload',views.uploadBlur),
+    path('restore',views.uploadRestore),
+    path('restoreimage',views.restore),
     path('<hash_id>',views.viewimg),
-
-
 ]

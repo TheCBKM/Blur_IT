@@ -4,7 +4,7 @@ import sys
 def saveCompressed(src):
     try:
         foo = Image.open(src)
-        foo.save(src,quality=20,optimize=True)  
+        foo.save(src,quality=80,optimize=True)  
         print("Compressed")
         return True
     except:

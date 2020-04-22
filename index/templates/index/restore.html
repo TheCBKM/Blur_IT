@@ -1,0 +1,263 @@
+<html>
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <style>
+    body {
+      background-color: #000000;
+    }
+
+    #demotext {
+      color: #FFFFFF;
+      /* background: #333333; */
+      text-shadow: 0 -1px 4px #FFF, 0 -2px 10px #ff0, 0 -10px 20px #ff8000, 0 -18px 40px #F00;
+      color: #FFFFFF;
+      font-weight: bolder;
+      font-size: 50px;
+
+    }
+
+    .p5canvas {
+      border: 6px dashed #FF0000;
+      -webkit-box-shadow: 0px 10px 13px -7px #000000, 5px 0px 15px 12px rgba(255, 0, 0, 0.4);
+      box-shadow: 0px 10px 13px -7px #000000, 5px 0px 15px 12px rgba(255, 0, 0, 0.4);
+    }
+
+    #downbtn {
+      margin-left: 30%;
+    }
+
+    .new {
+      border: 6px dashed rgb(0, 255, 13);
+      -webkit-box-shadow: 0px 10px 13px -7px #000000, 5px 0px 15px 12px rgba(2, 191, 14, 0.4);
+      box-shadow: 0px 10px 13px -7px #000000, 5px 0px 15px 12px rgba(2, 191, 14, 0.4);
+    }
+
+    .loader {
+      border: 16px solid #f3f3f3;
+      /* Light grey */
+      border-top: 16px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 2s linear infinite;
+      margin-top: 35%;
+      margin-left: 35%;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+
+    #canva {
+      cursor: url('data:image/x-icon;base64,AAACAAEAICAQAAAAAADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAhYWFAPqv6ADgm4sASkpKAJ/l7QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIAAAAAAAAAAAAAAAAAAAEiIAAAAAAAAAAAAAAAAAAxEiIAAAAAAAAAAAAAAAADMxEgAAAAAAAAAAAAAAAAMzMxAAAAAAAAAAAAAAAAAzMzMAAAAAAAAAAAAAAAADMzMwAAAAAAAAAAAAAAAAMzMzAAAAAAAAAAAAAAAAAzMzMAAAAAAAAAAAAAAAADMzMwAAAAAAAAAAAAAAAABTMzAAAAAAAAAAAAAAAAAFVTMAAAAAAAAAAAAAAAAABFVQAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////////////////////////////////////////////////////////////////////////////P////h////wP///4H///8D///+B////A////gf///wP///4H///+D////B////w////8///////////////w=='), auto;
+    }
+  </style>
+  <script>
+
+    var img, input;
+    var pg, c;
+    txt = "Drop your files here"
+    undo = []
+    redo = []
+    temp = []
+
+    function setup() {
+      c = createCanvas(400, 400);
+
+      pg = createGraphics(400, 400);
+
+      input = createFileInput(handleFile);
+      input.position(0, 0);
+      c.parent('canva')
+      s = select("#canva")
+      s.drop(handleFile)
+
+      document.getElementById('canva').addEventListener('dragover', () => {
+        pg.clear()
+        txt = 'Now Leave it Here'
+      })
+      document.getElementById('canva').addEventListener('dragleave', () => {
+        pg.clear()
+        txt = "Drop your files here"
+      })
+    }
+
+
+
+    function draw() {
+
+      if (img) {
+        image(img, 0, 0, 400, 400);
+
+      } else {
+
+        clear()
+        textSize(25);
+        stroke(11)
+        text(txt, 100, 200);
+        fill(255, 255, 255);
+      }
+      // img = false
+      image(pg, 0, 0);
+      image(pg, 0, 400);
+      pg.stroke(255);
+      pg.strokeWeight(8);
+      if (mouseIsPressed === true) {
+        pg.line(mouseX, mouseY, pmouseX, pmouseY);
+        temp.push({
+          mouseX: mouseX,
+          mouseY: mouseY,
+          pmouseX: pmouseX,
+          pmouseY: pmouseY
+        })
+
+
+      }
+    }
+
+
+    function mouseReleased() {
+      if (mouseX > 0 && mouseY > 0 && mouseX < 400 && mouseY < 400) {
+        undo.push(temp)
+        temp = []
+        redo = []
+        upload()
+      }
+    }
+    function clearSpecific(arr) {
+      pg.clear()
+      pg.stroke(255);
+      pg.strokeWeight(8);
+      arr.map(u => {
+        u.map(t => {
+          pg.line(t.mouseX, t.mouseY, t.pmouseX, t.pmouseY)
+        })
+      })
+
+    }
+
+    function undoo() {
+      if (undo.length != 0) {
+        redo.push(undo.pop())
+        clearSpecific(undo)
+        upload()
+      }
+
+    }
+
+    function redoo() {
+      if (redo.length != 0) {
+        undo.push(redo.pop())
+        clearSpecific(undo)
+        upload()
+
+      }
+    }
+
+    function clearAll() {
+      pg.clear()
+      redo = []
+      undo = []
+      upload()
+
+    }
+
+    function drawImage(d) {
+      console.log(d)
+      document.getElementById('healedImg').innerHTML = `<img class="new" src="${d}" height="400px" width="400px" alt="">`
+      document.getElementById('down').setAttribute("href", `${d}`)
+    }
+
+    function upload() {
+      document.getElementById('healedImg').innerHTML = `<div class="new" style="height: 400px; width: 400px;"><div class="loader"></div> </div>`
+
+      var img = createImage(pg.width, pg.height);
+      img.copy(pg, 0, 0, pg.width, pg.height, 0, 0, pg.width, pg.height);
+      print(img)
+      canva = img.canvas
+      d = canva.toDataURL("image/png");
+      console.log(d)
+      const photoFormData = new FormData();
+      photoFormData.append("img", document.getElementById('img').src);
+      photoFormData.append("mask", d);
+      axios({
+        method: "POST",
+        url: "/restore",
+        data: photoFormData,
+        headers: {
+          'Content-Type': 'multipart/form-data; boundary=${form._boundary}'
+        }
+      }).then(data => {
+        drawImage("data:image/jpeg;base64," + data.data)
+        console.log("data:image/jpeg;base64," + data.data)
+        // document.getElementById('output').src = "data:image/jpeg;base64," + data.data
+      })
+    }
+
+
+
+    function handleFile(file) {
+
+      if (file.type === 'image') {
+        img = createImg(file.data, '');
+        img.id('img')
+        img.hide();
+        document.getElementById('healedImg').innerHTML = `<img class="new" src="${file.data}" height="400px" width="400px" alt="">`
+        document.getElementById('down').setAttribute("href", `${file.data}`)
+        clearAll()
+      } else {
+        img = null;
+      }
+    }
+
+
+  </script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div id="demotext" class="mx-auto">Heal_IT</div>
+    </div>
+    <div class="row my-4">
+      <div class="col-md-6 old">
+        <div id="canva"></div>
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="button" onclick="undoo()" class="btn btn-warning">Undo</button>
+          <button type="button" onclick="redoo()" class="btn btn-warning">Redo</button>
+          <button type="button" onclick="clearAll()" class="btn btn-warning">Clear</button>
+        </div>
+      </div>
+      <div class="col-md-6">
+
+        <div id="healedImg">
+          <div class="new" style="height: 400px; width: 400px;">
+          </div>
+        </div>
+        <div class="row">
+
+          <div id="downbtn"><a id="down" download><button class="btn btn-primary">Download</button></a></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>
