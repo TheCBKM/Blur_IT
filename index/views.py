@@ -69,19 +69,22 @@ def uploadRestore(request):
     mask = request.POST.get('mask')
     fname = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     user_folder = 'media'
-    src = f'{user_folder}/input/{fname}.jpg'
+    src = f'{user_folder}/input/{fname}.png'
     maskdir=f'{user_folder}/input/m-{fname}.png'
-    dest = f'{user_folder}/output/o-{fname}.jpg'
+    dest = f'{user_folder}/output/o-{fname}.png'
 
     uri=DataURI(img)
+
     fd=open(src,'wb')
     fd.write(uri.data)
     fd.close()
+
 
     uri=DataURI(mask)
     fd=open(maskdir,'wb')
     fd.write(uri.data)
     fd.close()
+
 
     cp.saveCompressed(src)
     rs.restore(src,maskdir,dest)   
