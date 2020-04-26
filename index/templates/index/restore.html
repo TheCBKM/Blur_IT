@@ -69,7 +69,7 @@
   <script>
 
     var img, input;
-    var pg, c;
+    var pg, c, globalUrl;
     txt = "Drop your files here"
     undo = []
     redo = []
@@ -192,7 +192,7 @@
       d = canva.toDataURL("image/png");
       console.log(d)
       const photoFormData = new FormData();
-      photoFormData.append("img", document.getElementById('img').src);
+      photoFormData.append("img", globalUrl);
       photoFormData.append("mask", d);
       axios({
         method: "POST",
@@ -216,8 +216,9 @@
         img = createImg(file.data, '');
         img.id('img')
         img.hide();
-        document.getElementById('healedImg').innerHTML = `<img class="new" src="${file.data}" height="400px" width="400px" alt="">`
-        document.getElementById('down').setAttribute("href", `${file.data}`)
+        document.getElementById('healedImg').innerHTML = `<img class="new" src="${file.data}" height="400px" width="400px" alt="">`;
+        document.getElementById('down').setAttribute("href", `${file.data}`);
+        globalUrl = file.data;
         clearAll()
       } else {
         img = null;
